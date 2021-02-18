@@ -30,7 +30,7 @@ public class Solution {
     }
 
     static void debug(String format, Object ... args) {
-        System.out.printf(format, args);
+        System.out.printf(getIndent() + format, args);
     }
 
 
