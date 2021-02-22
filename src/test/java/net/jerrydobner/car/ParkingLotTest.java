@@ -52,6 +52,31 @@ class ParkingLotTest {
         assertNotNull(parked);
         checkTracker(Large, 5, 2);
 
+        park(MOTORCYCLE, Motorcycle, 5);
+        checkTracker(Motorcycle, 5, 0);
+
+        checkTracker(Regular, 15, 15);
+        park(MOTORCYCLE, Regular, 1);
+        checkTracker(Regular, 15, 14);
+
+        park(CAR, Regular, 14);
+        checkTracker(Regular, 15, 0);
+        park(CAR, Large, 2);
+        checkTracker(Large, 5, 0);
+
+
+
+    }
+
+    ParkedVehicle[] park(VehicleType vehicleType, SpotType expectedType, int count) {
+        var parkedVehicles = new ParkedVehicle[count];
+        for (int i = 0; i < count; i++) {
+            var p = parkingLot.park(vehicleType);
+            assertNotNull(p);
+            if (expectedType != null) assertEquals(expectedType, p.getSpotType());
+            parkedVehicles[i] = p;
+        }
+        return parkedVehicles;
     }
 
     @Test

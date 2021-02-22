@@ -80,7 +80,7 @@ public class ParkingLot {
 
 
 
-    public SpotTracker.ParkedVehicle park(VehicleType type) {
+    public ParkedVehicle park(VehicleType type) {
         for (var rule : parkingRules.get(type).entrySet()) {
             var reservation = trackers.get(rule.getKey()).park(rule.getValue());
             if (reservation != null) {
@@ -112,10 +112,12 @@ public class ParkingLot {
         return trackers.get(type).getSpotsUsed();
     }
 
-    @Data
+    @RequiredArgsConstructor
     static class SpotTracker {
-        private final SpotType type;
-        private final int capacity;
+        final SpotType type;
+        @Getter
+        final int capacity;
+        @Getter
         private int spotsUsed;
 
 
@@ -124,25 +126,23 @@ public class ParkingLot {
                 return null;
             } else {
                 spotsUsed += spots;
-                return new ParkedVehicle(spots);
+                return new ParkedVehicle(this, spots);
             }
         }
 
-        @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
-        class ParkedVehicle {
-            final int spots;
-
-            void leave() {
-                if (spotsUsed < spots) throw new IllegalArgumentException(
-                        format("current spots used (%d) is less than spots leaving (%d)", spotsUsed, spots));
-                spotsUsed -= spots;
-            }
-        }
 
         int getRemaining() {
             return capacity - spotsUsed;
         }
 
+        void decrement(int spots) {
+            spotsUsed -= spots;
+            assert spotsUsed >= 0;
+        }
+
     }
 
 }
+
+
+
